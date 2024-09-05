@@ -17,6 +17,7 @@ import googleConfig from './auth-google/config/google.config';
 import fileConfig from './files/config/file.config';
 import { FilesModule } from './files/files.module';
 import { HealthModule } from './health/health.module';
+import { VerficationModule } from './verification/verification.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { HealthModule } from './health/health.module';
     FilesModule,
     AuthGoogleModule,
     HealthModule,
+    VerficationModule,
   ],
   controllers: [],
   providers: [],

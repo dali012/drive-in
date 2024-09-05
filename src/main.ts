@@ -9,17 +9,22 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import setupSwagger from './utils/setup-swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const configService = app.get(ConfigService<AllConfigType>);
+
+  app.setViewEngine('ejs');
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
 
   app.enableShutdownHooks();
   app.setGlobalPrefix(

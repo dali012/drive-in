@@ -47,14 +47,6 @@ export class AuthController {
     return this.service.register(createUserDto);
   }
 
-  @Post('email/confirm')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async confirmEmail(
-    @Body() confirmEmailDto: AuthConfirmEmailDto,
-  ): Promise<void> {
-    return this.service.confirmEmail(confirmEmailDto.hash);
-  }
-
   @Post('email/confirm/new')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmNewEmail(

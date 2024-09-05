@@ -15,22 +15,17 @@ export class MailService {
   ) {}
 
   async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
-    const emailConfirmTitle: MaybeType<string> = 'emailConfirmTitle';
-    const text1: MaybeType<string> = 'text1';
-    const text2: MaybeType<string> = 'text2';
-    const text3: MaybeType<string> = 'text3';
-
     const url = new URL(
-      this.configService.getOrThrow('app.frontendDomain', {
+      this.configService.getOrThrow('app.backendDomain', {
         infer: true,
-      }) + '/confirm-email',
+      }) + '/api/verification/confirm-email',
     );
     url.searchParams.set('hash', mailData.data.hash);
 
     await this.mailerService.sendMail({
       to: mailData.to,
-      subject: emailConfirmTitle,
-      text: `${url.toString()} ${emailConfirmTitle}`,
+      subject: 'Verify Your Email',
+      text: `${url.toString()} ${'Verify Your Email'}`,
       templatePath: path.join(
         this.configService.getOrThrow('app.workingDirectory', {
           infer: true,
@@ -41,13 +36,9 @@ export class MailService {
         'activation.hbs',
       ),
       context: {
-        title: emailConfirmTitle,
-        url: url.toString(),
-        actionTitle: emailConfirmTitle,
+        verification_url: url.toString(),
         app_name: this.configService.get('app.name', { infer: true }),
-        text1,
-        text2,
-        text3,
+        year: new Date().getFullYear(),
       },
     });
   }
