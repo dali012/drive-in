@@ -1,0 +1,67 @@
+services:
+  drive-in:
+    image: dali012/drive-in
+    container_name: drive-in
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - .env.docker
+    ports:
+      - '1337:1337'
+    volumes:
+      - ./src:/app/src
+    command: pnpm start:dev
+    networks:
+      - drive-in
+
+  db:
+    image: postgres:16
+    container_name: drive-in-db
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: drive_in
+      TZ: 'Africa/Tunis'
+    ports:
+      - '5432:5432'
+    networks:
+      - drive-in
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - '5050:80'
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@drivein.com
+      PGADMIN_DEFAULT_PASSWORD: 12345678
+      PGADMIN_CONFIG_WTF_CSRF_ENABLED: 'False'
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: 'False'
+    networks:
+      - drive-in
+
+  maildev:
+    build:
+      context: .
+      dockerfile: maildev.Dockerfile
+    ports:
+      - ${MAIL_CLIENT_PORT}:1080
+      - ${MAIL_PORT}:1025
+    networks:
+      - drive-in
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  drive-in:
+    driver: bridge

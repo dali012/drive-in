@@ -1,0 +1,29 @@
+import { AllConfigType } from '@/config/config.type';
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+function setupSwagger(app: INestApplication) {
+  const configService = app.get(ConfigService<AllConfigType>);
+  const appName = configService.getOrThrow('app.name', { infer: true });
+
+  const config = new DocumentBuilder()
+    .setTitle(appName)
+    .setDescription('Drive In API Documentation')
+    .setVersion('1.0')
+    .setContact('DriveIn', 'https://drivein.com', 'contact@drivein.com')
+    .addBearerAuth()
+    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'API Key')
+    .addServer(
+      configService.getOrThrow('app.backendDomain', { infer: true }),
+      'Development',
+    )
+    .addServer('https://example.com', 'Staging')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document, {
+    customSiteTitle: appName,
+  });
+}
+
+export default setupSwagger;
