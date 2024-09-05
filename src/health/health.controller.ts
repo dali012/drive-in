@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
 import {
-  DiskHealthIndicator,
   HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
@@ -13,7 +12,6 @@ export class HealthController {
     private health: HealthCheckService,
     private http: HttpHealthIndicator,
     private db: TypeOrmHealthIndicator,
-    private readonly disk: DiskHealthIndicator,
   ) {}
 
   @Get()
@@ -23,8 +21,6 @@ export class HealthController {
       () =>
         this.http.pingCheck('DriveIn API Docs', 'https://dali012.eu.org/docs'),
       () => this.db.pingCheck('Supabase Postgres'),
-      () =>
-        this.disk.checkStorage('storage', { path: '/', thresholdPercent: 0.5 }),
     ]);
   }
 }
