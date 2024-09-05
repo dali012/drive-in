@@ -11,14 +11,14 @@ function setupSwagger(app: INestApplication) {
     .setTitle(appName)
     .setDescription('Drive In API Documentation')
     .setVersion('1.0')
-    .setContact('DriveIn', 'https://drivein.com', 'contact@drivein.com')
+    .setContact('DriveIn', 'https://dali012.eu.org', 'contact@drivein.com')
     .addBearerAuth()
     .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'API Key')
     .addServer(
       configService.getOrThrow('app.backendDomain', { infer: true }),
       'Development',
     )
-    .addServer('https://example.com', 'Staging')
+    .addServer('https://dali012.eu.org', 'Staging')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
