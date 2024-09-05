@@ -21,16 +21,12 @@ USER node
 FROM base AS builder
 WORKDIR /app
 
-# Copy package files and dependencies from the development stage
+# Copy only necessary files for build
 COPY --chown=node:node package*.json pnpm-lock.yaml ./
-COPY --chown=node:node --from=development /app/node_modules ./node_modules
-COPY --chown=node:node --from=development /app/src ./src
-COPY --chown=node:node --from=development /app/tsconfig.json ./tsconfig.json
-COPY --chown=node:node --from=development /app/tsconfig.build.json ./tsconfig.build.json
-COPY --chown=node:node --from=development /app/nest-cli.json ./nest-cli.json
+COPY --chown=node:node . .
 
-# Build the application
-RUN pnpm build
+# Install dependencies and build
+RUN pnpm install --frozen-lockfile && pnpm build
 
 # Production stage
 FROM node:20-alpine AS production
@@ -40,9 +36,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copy necessary files from the builder stage
-COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /app/dist ./dist
+COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /app/package.json ./
+COPY --chown=node:node --from=builder /app/views ./views
+COPY --chown=node:node --from=builder /app/src/mail/mail-templates ./src/mail/mail-templates
 
 # Set up application directory
 RUN mkdir -p src/generated && chown -R node:node src

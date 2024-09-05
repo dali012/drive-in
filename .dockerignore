@@ -3,5 +3,9 @@
 /dist
 /files
 Dockerfile
-.dockerignore
 npm-debug.log
+*.log
+README.md
+.git
+
+
