@@ -14,10 +14,6 @@ function setupSwagger(app: INestApplication) {
     .setContact('DriveIn', 'https://dali012.eu.org', 'contact@drivein.com')
     .addBearerAuth()
     .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'API Key')
-    .addServer(
-      configService.getOrThrow('app.backendDomain', { infer: true }),
-      'Development',
-    )
     .addServer('https://dali012.eu.org', 'Staging')
     .build();
   const document = SwaggerModule.createDocument(app, config);

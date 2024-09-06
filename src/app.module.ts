@@ -8,9 +8,12 @@ import { MailModule } from '@/mail/mail.module';
 import { MailerModule } from '@/mailer/mailer.module';
 import { SessionModule } from '@/session/session.module';
 import { UsersModule } from '@/users/users.module';
+import { LoggingInterceptor } from '@algoan/nestjs-logging-interceptor';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { AuthGoogleModule } from './auth-google/auth-google.module';
 import googleConfig from './auth-google/config/google.config';
@@ -39,6 +42,7 @@ import { VerficationModule } from './verification/verification.module';
         return new DataSource(options).initialize();
       },
     }),
+    PrometheusModule.register(),
     UsersModule,
     SessionModule,
     AuthModule,
@@ -50,6 +54,27 @@ import { VerficationModule } from './verification/verification.module';
     VerficationModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: () =>
+        new LoggingInterceptor({
+          mask: {
+            requestHeader: {
+              password: true,
+              authorization: (header: string | string[]) => {
+                if (Array.isArray(header)) {
+                  return header.map((h) =>
+                    h.replace(/Bearer\s.+/, 'Bearer hidden'),
+                  );
+                }
+                return header.replace(/Bearer\s.+/, 'Bearer hidden');
+              },
+              'x-api-key': true,
+            },
+          },
+        }),
+    },
+  ],
 })
 export class AppModule {}
