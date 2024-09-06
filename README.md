@@ -1,6 +1,6 @@
 # Carpooling App API
 
-Welcome to the Carpooling App API project! This API is built using NestJS, PostgreSQL, and TypeORM, providing a robust backend solution for managing carpooling services.
+Welcome to the Carpooling App API project! This API is built using NestJS, Supabse(db + storage), and TypeORM, providing a robust backend solution for managing carpooling services.
 
 ## Table of Contents
 
@@ -11,8 +11,11 @@ Welcome to the Carpooling App API project! This API is built using NestJS, Postg
   - [Configuration](#configuration)
   - [Running the Application](#running-the-application)
   - [API Endpoints](#api-endpoints)
-    - [Health Check](#health-check)
+    - [Health Check and Metrics](#health-check-and-metrics)
+    - [Documentation](#documentation)
+    - [User Management](#user-management)
     - [Authentication Endpoints](#authentication-endpoints)
+    - [File Management](#file-management)
   - [Technologies](#technologies)
   - [Contributing](#contributing)
   - [License](#license)
@@ -38,25 +41,21 @@ Follow these steps to set up the Carpooling App API on your local machine.
 2. **Install Dependencies**
 
    ```bash
-    pnpm install
-
+   pnpm install
    ```
 
 3. **Setup PostgreSQL**
-   - Create a PostgreSQL database and user. Update your PostgreSQL configuration in the .env file see [Configuration](#configuration).
+   - Create a PostgreSQL database and user. Update your PostgreSQL configuration in the `.env` file. See [Configuration](#configuration) for more details.
 
 ## Configuration
 
-- Create a .env file in the root directory of the project and configure the environment variables:
+- Copy the `.env.example` file to `.env` in the root directory of the project:
 
   ```bash
-  DATABASE_HOST=localhost
-  DATABASE_PORT=5432
-  DATABASE_USERNAME=your-username
-  DATABASE_PASSWORD=your-password
-  DATABASE_NAME=carpooling_app
-  API_KEY=your-secret-key
+  mv .env.example .env
   ```
+
+- Then configure the environment variables in the `.env` file
 
 ## Running the Application
 
@@ -82,31 +81,43 @@ Follow these steps to set up the Carpooling App API on your local machine.
 
 ## API Endpoints
 
-- The API is organized into the following endpoints:
+The API is organized into several categories:
 
-- **GET** `/api/users` (version: 1)
-- **GET** `/api/users/me` (version: 1)
-- **PATCH** `/api/users/me` (version: 1)
-- **DELETE** `/api/users/me` (version: 1)
-- **PATCH** `/api/users/ban/:userId` (version: 1)
-- **GET** `/api/users/:userId` (version: 1)
-- **PATCH** `/api/users/:userId` (version: 1)
-- **DELETE** `/api/users/delete/:userId` (version: 1)
+### Health Check and Metrics
 
-### Health Check
+- **GET** `/health` - Check the health of the service.
+- **GET** `/metrics` - Access service metrics.
 
-- **GET** `/health`
+### Documentation
+
+- **GET** `/docs` - Access the API documentation.
+
+### User Management
+
+- **POST** `/api/users` (version: 1) - Create a new user.
+- **GET** `/api/users` (version: 1) - Get all users.
+- **GET** `/api/users/:id` (version: 1) - Get user by ID.
+- **PATCH** `/api/users/:id` (version: 1) - Update user by ID.
+- **DELETE** `/api/users/:id` (version: 1) - Delete user by ID.
 
 ### Authentication Endpoints
 
-- **POST** `/api/auth/register` (version: 1)
-- **POST** `/api/auth/login` (version: 1)
-- **POST** `/api/auth/logout` (version: 1)
-- **POST** `/api/auth/google-login` (version: 1)
-- **PATCH** `/api/auth/change-password` (version: 1)
-- **POST** `/api/auth/forgot-password` (version: 1)
-- **POST** `/api/auth/set-new-password` (version: 1)
-- **POST** `/api/auth/refresh-token` (version: 1)
+- **POST** `/api/auth/email/register` (version: 1) - Register a new user via email.
+- **POST** `/api/auth/email/login` (version: 1) - Login with email.
+- **POST** `/api/auth/email/confirm/new` (version: 1) - Request a new email confirmation.
+- **POST** `/api/auth/forgot/password` (version: 1) - Request a password reset.
+- **POST** `/api/auth/reset/password` (version: 1) - Reset the password.
+- **GET** `/api/auth/me` (version: 1) - Get the authenticated user's details.
+- **PATCH** `/api/auth/me` (version: 1) - Update the authenticated user's details.
+- **DELETE** `/api/auth/me` (version: 1) - Delete the authenticated user.
+- **POST** `/api/auth/refresh` (version: 1) - Refresh authentication tokens.
+- **POST** `/api/auth/logout` (version: 1) - Logout the user.
+- **POST** `/api/auth/google/login` (version: 1) - Login via Google OAuth.
+- **GET** `/api/verification/confirm-email` (version: 1) - Confirm user email address.
+
+### File Management
+
+- **POST** `/api/files/upload` (version: 1) - Upload a file.
 
 ## Technologies
 
@@ -118,13 +129,13 @@ Follow these steps to set up the Carpooling App API on your local machine.
 
 ## Contributing
 
-- Contributions are welcome! Please follow these guidelines:
+Contributions are welcome! Please follow these guidelines:
 
-  1. **Fork the repository**
-  2. **Create a new branch (git checkout -b feature-branch)**.
-  3. **Commit your changes (git commit -am 'Add new feature')**.
-  4. **Push to the branch (git push origin feature-branch)**.
-  5. **Create a new Pull Request**.
+1. **Fork the repository**
+2. **Create a new branch (`git checkout -b feature-branch`)**
+3. **Commit your changes (`git commit -am 'Add new feature'`)**
+4. **Push to the branch (`git push origin feature-branch`)**
+5. **Create a new Pull Request**
 
 ## License
 
