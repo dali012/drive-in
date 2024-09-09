@@ -12,16 +12,21 @@ import { HomeModule } from '@/home/home.module';
 import mailConfig from '@/mail/config/mail.config';
 import { MailModule } from '@/mail/mail.module';
 import { MailerModule } from '@/mailer/mailer.module';
-import { MetricsModule } from '@/metrics/metrics.module';
 import { SessionModule } from '@/session/session.module';
 import { UsersModule } from '@/users/users.module';
 import { VerficationModule } from '@/verification/verification.module';
 import { LoggingInterceptor } from '@algoan/nestjs-logging-interceptor';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  makeCounterProvider,
+  makeGaugeProvider,
+} from '@willsoto/nestjs-prometheus';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { MetricsMiddleware } from './metrics/metrics.middleware';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -43,6 +48,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
         return new DataSource(options).initialize();
       },
     }),
+    MetricsModule,
     UsersModule,
     SessionModule,
     AuthModule,
@@ -52,7 +58,6 @@ import { DataSource, DataSourceOptions } from 'typeorm';
     AuthGoogleModule,
     VerficationModule,
     HealthModule,
-    MetricsModule,
     HomeModule,
   ],
   controllers: [],
@@ -77,6 +82,20 @@ import { DataSource, DataSourceOptions } from 'typeorm';
           },
         }),
     },
+    makeCounterProvider({
+      name: 'count',
+      help: 'metric_help',
+      labelNames: ['method', 'origin'] as string[],
+    }),
+    makeGaugeProvider({
+      name: 'gauge',
+      help: 'metric_help',
+    }),
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    //forRoutes('yourRootapi')
+    consumer.apply(MetricsMiddleware).forRoutes('/api');
+  }
+}

@@ -1,10 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { PrometheusController } from '@willsoto/nestjs-prometheus';
+import { Response } from 'express';
 
 @ApiTags('Metrics')
 @Controller('metrics')
-export class MetricsController {
-  @Get()
+export class MetricsController extends PrometheusController {
   @ApiOperation({ summary: 'Retrieve Prometheus metrics for the application' })
   @ApiOkResponse({
     description: 'Returns metrics in Prometheus format',
@@ -25,5 +26,8 @@ export class MetricsController {
       },
     },
   })
-  getMetrics() {}
+  @Get()
+  async index(@Res({ passthrough: true }) response: Response) {
+    return super.index(response);
+  }
 }
