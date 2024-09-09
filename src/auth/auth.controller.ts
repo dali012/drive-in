@@ -13,7 +13,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthConfirmEmailDto } from './dto/auth-confirm-email.dto';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
@@ -32,6 +37,7 @@ import { RefreshResponseDto } from './dto/refresh-response.dto';
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
+  @ApiOperation({ summary: 'Login using email and password' })
   @Post('email/login')
   @ApiOkResponse({
     type: LoginResponseDto,
@@ -41,12 +47,14 @@ export class AuthController {
     return this.service.validateLogin(loginDto);
   }
 
+  @ApiOperation({ summary: 'Register a new user using email' })
   @Post('email/register')
   @HttpCode(HttpStatus.NO_CONTENT)
   async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
     return this.service.register(createUserDto);
   }
 
+  @ApiOperation({ summary: 'Confirm a new email address' })
   @Post('email/confirm/new')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmNewEmail(
@@ -55,6 +63,7 @@ export class AuthController {
     return this.service.confirmNewEmail(confirmEmailDto.hash);
   }
 
+  @ApiOperation({ summary: 'Request a password reset' })
   @Post('forgot/password')
   @HttpCode(HttpStatus.NO_CONTENT)
   async forgotPassword(
@@ -63,6 +72,7 @@ export class AuthController {
     return this.service.forgotPassword(forgotPasswordDto.email);
   }
 
+  @ApiOperation({ summary: 'Reset the password using a hash' })
   @Post('reset/password')
   @HttpCode(HttpStatus.NO_CONTENT)
   resetPassword(@Body() resetPasswordDto: AuthResetPasswordDto): Promise<void> {
@@ -72,6 +82,7 @@ export class AuthController {
     );
   }
 
+  @ApiOperation({ summary: 'Get the authenticated user’s profile' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
@@ -83,6 +94,7 @@ export class AuthController {
     return this.service.me(request.user);
   }
 
+  @ApiOperation({ summary: 'Refresh authentication token' })
   @ApiBearerAuth()
   @ApiOkResponse({
     type: RefreshResponseDto,
@@ -97,6 +109,7 @@ export class AuthController {
     });
   }
 
+  @ApiOperation({ summary: 'Logout the authenticated user' })
   @ApiBearerAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
@@ -107,6 +120,7 @@ export class AuthController {
     });
   }
 
+  @ApiOperation({ summary: 'Update the authenticated user’s profile' })
   @ApiBearerAuth()
   @Patch('me')
   @UseGuards(AuthGuard('jwt'))
@@ -121,6 +135,7 @@ export class AuthController {
     return this.service.update(request.user, userDto);
   }
 
+  @ApiOperation({ summary: 'Soft delete the authenticated user’s profile' })
   @ApiBearerAuth()
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))

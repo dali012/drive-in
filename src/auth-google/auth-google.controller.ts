@@ -8,7 +8,7 @@ import {
   Post,
   SerializeOptions,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGoogleService } from './auth-google.service';
 import { AuthGoogleLoginDto } from './dto/auth-google-login.dto';
 
@@ -23,6 +23,7 @@ export class AuthGoogleController {
     private readonly authGoogleService: AuthGoogleService,
   ) {}
 
+  @ApiOperation({ summary: 'Login using Google authentication' })
   @ApiOkResponse({
     type: LoginResponseDto,
   })

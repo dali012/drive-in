@@ -21,6 +21,7 @@ import {
 import {
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -39,6 +40,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({ summary: 'Create a new user' })
   @ApiCreatedResponse({
     type: User,
   })
@@ -48,6 +50,7 @@ export class UsersController {
     return this.usersService.create(createProfileDto);
   }
 
+  @ApiOperation({ summary: 'Retrieve a paginated list of users' })
   @ApiOkResponse({
     type: InfinityPaginationResponse(User),
   })
@@ -74,6 +77,7 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Retrieve a single user by ID' })
   @ApiOkResponse({
     type: User,
   })
@@ -88,6 +92,7 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
+  @ApiOperation({ summary: 'Update an existing user by ID' })
   @ApiOkResponse({
     type: User,
   })
@@ -105,6 +110,7 @@ export class UsersController {
     return this.usersService.update(id, updateProfileDto);
   }
 
+  @ApiOperation({ summary: 'Delete a user by ID' })
   @Delete(':id')
   @ApiParam({
     name: 'id',

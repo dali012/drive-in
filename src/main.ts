@@ -11,6 +11,8 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { useContainer } from 'class-validator';
+import compression from 'compression';
+import helmet from 'helmet';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import setupSwagger from './utils/setup-swagger';
@@ -25,6 +27,9 @@ async function bootstrap() {
 
   app.setViewEngine('ejs');
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
+
+  app.use(helmet());
+  app.use(compression());
 
   app.enableShutdownHooks();
   app.setGlobalPrefix(

@@ -30,7 +30,12 @@
       "@/social/*": ["src/social/*"],
       "@/mail/*": ["src/mail/*"],
       "@/mailer/*": ["src/mailer/*"],
-      "@/files/*": ["src/files/*"]
+      "@/files/*": ["src/files/*"],
+      "@/health/*": ["src/health/*"],
+      "@/metrics/*": ["src/metrics/*"],
+      "@/verification/*": ["src/verification/*"],
+      "@/auth-google/*": ["src/auth-google/*"],
+      "@/home/*": ["src/home/*"]
     }
   }
 }
