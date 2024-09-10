@@ -20,9 +20,6 @@ export class SessionEntity extends EntityHelper {
 
   @ManyToOne(() => UserEntity, {
     eager: true,
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
   })
   @Index()
   user: UserEntity;
