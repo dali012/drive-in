@@ -77,9 +77,6 @@ export class UserEntity extends EntityHelper {
   })
   @ManyToOne(() => StatusEntity, {
     eager: true,
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
   })
   status?: StatusEntity;
 
@@ -88,9 +85,6 @@ export class UserEntity extends EntityHelper {
   })
   @OneToOne(() => FileEntity, {
     eager: true,
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE'
   })
   @JoinColumn()
   photo?: FileEntity | null;
