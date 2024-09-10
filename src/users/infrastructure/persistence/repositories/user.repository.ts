@@ -105,6 +105,6 @@ export class UsersRepository implements UserRepository {
   }
 
   async remove(id: User['id']): Promise<void> {
-    await this.usersRepository.softDelete(id);
+    await this.usersRepository.delete(id);
   }
 }
